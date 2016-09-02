@@ -12,7 +12,7 @@ Android 和 IOS 的曲线图（包含贝塞尔曲线和普通折线图），长�
 > Android
 
 ![贝塞尔曲线](https://github.com/chengli3209/BlueChartView/blob/master/Android/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF%E5%9B%BE.jpg)
-![普通曲线图](https://github.com/chengli3209/BlueChartView/blob/master/Android/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF%E5%9B%BE.jpg)
+![普通曲线图](https://github.com/chengli3209/BlueChartView/blob/master/Android/%E6%99%AE%E9%80%9A%E6%9B%B2%E7%BA%BF%E5%9B%BE.jpg)
 
 
 
