@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context="com.blue.charts.MainActivity" >
 
     <TextView
@@ -22,8 +23,8 @@
     <com.blue.charts.chart.view.ChartViewLayout
         android:id="@+id/chartViewLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:layout_below="@+id/tv_chart"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"/>
 
 </RelativeLayout>

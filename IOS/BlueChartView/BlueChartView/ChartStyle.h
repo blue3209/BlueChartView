@@ -39,6 +39,8 @@
 @property (nonatomic,assign) UIColor        *verticalCrossLineColor;
 /** 竖向十字线宽度 */
 @property (nonatomic,assign) NSInteger      verticalCrossLineWidth;
+/** 圆的半径*/
+@property (nonatomic,assign) CGFloat        radius;
 /** 是否添加示例图 */
 @property (nonatomic,assign) BOOL           isShowLegendView;
 

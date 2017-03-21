@@ -41,7 +41,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
     // Do any additional setup after loading the view, typically from a nib.
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     CGFloat height = [UIScreen mainScreen].bounds.size.height;
-    self.chartViewLayout = [[ChartViewLayout alloc]initWithFrame:CGRectMake(0, 88, width, height - 88)];
+    self.chartViewLayout = [[ChartViewLayout alloc]initWithFrame:CGRectMake(50, 88, width - 100, 200)];
     self.chartViewLayout.onChartListener = self;
     [self.view addSubview:self.chartViewLayout];
     
@@ -70,7 +70,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 -(ChartLine *)getRandomChartLine:(NSString*)title color:(UIColor*)color {
     NSMutableArray *points = [NSMutableArray new];
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 6; i++) {
         int r = arc4random_uniform(10);
         if (i % 10 == 0) {
             r = -arc4random_uniform(15);

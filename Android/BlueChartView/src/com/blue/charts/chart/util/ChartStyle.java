@@ -34,6 +34,8 @@ public class ChartStyle {
 	private int verticalCrossLineColor;
 	/** 竖向十字线宽度 */
 	private int verticalCrossLineWidth;
+	/** 圆的半径 */
+	public float radius;
 	/** 是否添加示例图 */
 	private boolean isShowLegendView = false;
 
@@ -48,7 +50,8 @@ public class ChartStyle {
 		verticalLabelTextSize = 24;
 		verticalLabelTextColor = Color.GRAY;
 
-		axisLineWidth = 2;
+		axisLineWidth = 5;
+		radius = 10;
 
 		horizontalTitlePaddingLeft = 20;
 		horizontalTitlePaddingRight = 10;

@@ -88,7 +88,7 @@
     }
     
     //点之间间距
-    self.labelWidth = (width - self.yAxisWidth)/self.data.xMaxLabelCount;
+    self.labelWidth = (width - self.yAxisWidth)/(self.data.xMaxLabelCount - 1);
     //最右侧的x坐标
     self.maxRightX = (width - self.yAxisWidth) - self.xAxisWidth;
     
@@ -151,7 +151,13 @@
         label.width = [ChartUtils widthForString:label.text fontSize:self.style.verticalLabelTextSize];;
         label.height = vh;
         
-        label.x = self.labelWidth * ((i - self.data.mStartIndex) + 0.5f);
+        label.x = self.labelWidth * ((i - self.data.mStartIndex));
+        if(i == self.data.mStartIndex){
+            label.x += self.style.radius;
+        }else if(i == self.data.mEndIndex - 1){
+            label.x -= self.style.radius;
+        }
+        
         label.y = self.yAxisHeight;
         
         if(i == 0 || (i == self.data.mEndIndex - 1 && self.data.mEndIndex == count - 1)){
@@ -200,8 +206,12 @@
         float pointWidth = self.labelWidth;
         for(int i = self.data.mStartIndex;i < self.data.mEndIndex;i++){
             ChartLinePoint *point = [chartLine.points objectAtIndex:i];
-            point.x = pointWidth * ((i - self.data.mStartIndex) + 0.5f);
-            
+            point.x = pointWidth * ((i - self.data.mStartIndex));
+            if(i == self.data.mStartIndex){
+                point.x += self.style.radius;
+            }else if(i == self.data.mEndIndex - 1){
+                point.x -= self.style.radius;
+            }
             float ratio = (point.yValue - self.data.minValueY) / (self.data.maxValueY - self.data.minValueY);
             point.y = maxCoordinateY - (maxCoordinateY - minCoordinateY) * ratio;
         }

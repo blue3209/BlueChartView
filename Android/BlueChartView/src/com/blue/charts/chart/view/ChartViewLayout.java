@@ -58,6 +58,7 @@ public class ChartViewLayout extends LinearLayout {
 		animateRunnable = new AnimateRunnable();
 		chartLayout = new LinearLayout(getContext());
 		chartView = new ChartView(getContext(), data, style, calculator);
+		chartView.setDrawBesselPoint(true);
 
 		chartVerticalAxes = new ChartYCoordinateAxesView(getContext(),
 				data.getyLabels(), style, calculator);

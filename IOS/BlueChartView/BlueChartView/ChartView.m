@@ -104,16 +104,17 @@
             CGContextSetLineCap(context, kCGLineCapRound);
             CGContextDrawPath(context, kCGPathStroke);
             
-            for(int i = 0;i < count;i = i + 3){
-                ChartLinePoint *p = [line.besselPoints objectAtIndex:i];
-                if(i == 0){
-                    CGContextMoveToPoint(context, p.x, p.y);
-                }else{
-                    ChartLinePoint *p1 = [line.besselPoints objectAtIndex:i - 1];
-                    ChartLinePoint *p2 = [line.besselPoints objectAtIndex:i - 2];
-                    CGContextAddCurveToPoint(context, p2.x, p2.y, p1.x, p1.y, p.x, p.y);
-                }
-            }
+            //绘制阴影
+            //for(int i = 0;i < count;i = i + 3){
+            //    ChartLinePoint *p = [line.besselPoints objectAtIndex:i];
+            //    if(i == 0){
+            //        CGContextMoveToPoint(context, p.x, p.y);
+            //    }else{
+            //        ChartLinePoint *p1 = [line.besselPoints objectAtIndex:i - 1];
+            //        ChartLinePoint *p2 = [line.besselPoints objectAtIndex:i - 2];
+            //        CGContextAddCurveToPoint(context, p2.x, p2.y, p1.x, p1.y, p.x, p.y);
+            //    }
+            //}
         }else{
             //绘制普通曲线
             for(int i = self.data.mStartIndex;i < self.data.mEndIndex;i++){
@@ -128,22 +129,34 @@
             CGContextSetLineCap(context, kCGLineCapRound);
             CGContextDrawPath(context, kCGPathStroke);
             
-            for(int i = self.data.mStartIndex ;i < self.data.mEndIndex;i++){
-                ChartLinePoint *point = [line.points objectAtIndex:i];
-                if(i == self.data.mStartIndex){
-                    CGContextMoveToPoint(context, point.x, point.y);
-                }else{
-                    CGContextAddLineToPoint(context, point.x, point.y);
-                }
-            }
+            //绘制阴影
+            //for(int i = self.data.mStartIndex ;i < self.data.mEndIndex;i++){
+            //    ChartLinePoint *point = [line.points objectAtIndex:i];
+            //    if(i == self.data.mStartIndex){
+            //        CGContextMoveToPoint(context, point.x, point.y);
+            //    }else{
+            //        CGContextAddLineToPoint(context, point.x, point.y);
+            //    }
+            //}
         }
         
-        UIColor *fillColor = [line.lineColor colorWithAlphaComponent:0.4f];
-        CGContextSetFillColorWithColor(context, fillColor.CGColor);
-        CGContextAddLineToPoint(context,self.calculator.maxX,self.calculator.yAxisHeight);
-        CGContextAddLineToPoint(context,self.calculator.minX,self.calculator.yAxisHeight);
-        CGContextClosePath(context);
-        CGContextDrawPath(context, kCGPathFill);
+        //绘制阴影
+        //UIColor *fillColor = [line.lineColor colorWithAlphaComponent:0.4f];
+        //CGContextSetFillColorWithColor(context, fillColor.CGColor);
+        //CGContextAddLineToPoint(context,self.calculator.maxX,self.calculator.yAxisHeight);
+        //CGContextAddLineToPoint(context,self.calculator.minX,self.calculator.yAxisHeight);
+        //CGContextClosePath(context);
+        //CGContextDrawPath(context, kCGPathFill);
+        
+        
+        CGContextSetFillColorWithColor(context, line.lineColor.CGColor);
+        //绘制Point
+        for(int i = self.data.mStartIndex;i < self.data.mEndIndex;i++){
+            ChartLinePoint *p = [line.points objectAtIndex:i];
+            CGContextAddArc(context, p.x, p.y, self.style.radius, 0, 360, 0); //添加一个圆
+            CGContextDrawPath(context, kCGPathFill);
+        }
+
     }
 }
 

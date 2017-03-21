@@ -25,7 +25,8 @@
         self.verticalLabelTextColor = [UIColor lightGrayColor];
         
         self.axisLineWidth = 2;
-        self.chartLineWidth = 1.5;
+        self.chartLineWidth = 3;
+        self.radius = 4;
         
         self.horizontalTitlePaddingLeft = 20;
         self.horizontalTitlePaddingRight = 10;

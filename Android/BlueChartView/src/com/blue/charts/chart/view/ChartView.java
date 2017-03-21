@@ -53,9 +53,6 @@ public class ChartView extends View {
 	/** 曲线图事件监听器 */
 	private OnChartListener chartListener;
 
-	/** 线的宽度 */
-	private float lineWidth = 3f;
-
 	/** 是否绘制全部贝塞尔结点 */
 	public boolean drawBesselPoint;
 
@@ -79,55 +76,50 @@ public class ChartView extends View {
 		this.drawBesselPoint = true;
 
 		this.mDecelerateInterpolator = new DecelerateInterpolator(2f);
-		this.detector = new GestureDetector(getContext(),
-				new SimpleOnGestureListener() {
-					@Override
-					public boolean onScroll(MotionEvent e1, MotionEvent e2,
-							float distanceX, float distanceY) {
-						// ChartUtils.log(
-						// "onScroll",
-						// distanceX + "//"
-						// + Math.abs(distanceX * DRAG_RATE));
-						if (Math.abs(distanceX * DRAG_RATE) >= 4) {
-							getParent()
-									.requestDisallowInterceptTouchEvent(true);
-							ChartView.this.calculator.move(distanceX
-									* DRAG_RATE);
-							invalidateView();
-							return true;
-						}
-						return false;
-					}
+		this.detector = new GestureDetector(getContext(), new SimpleOnGestureListener() {
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+				// ChartUtils.log(
+				// "onScroll",
+				// distanceX + "//"
+				// + Math.abs(distanceX * DRAG_RATE));
+				if (Math.abs(distanceX * DRAG_RATE) >= 4) {
+					getParent().requestDisallowInterceptTouchEvent(true);
+					ChartView.this.calculator.move(distanceX * DRAG_RATE);
+					invalidateView();
+					return true;
+				}
+				return false;
+			}
 
-					@Override
-					public boolean onFling(MotionEvent e1, MotionEvent e2,
-							float velocityX, float velocityY) {
-						// 参数解释：
-						// e1：第1个ACTION_DOWN MotionEvent
-						// e2：最后一个ACTION_MOVE MotionEvent
-						// velocityX：X轴上的移动速度，像素/秒
-						// velocityY：Y轴上的移动速度，像素/秒
-						animateScroll(-velocityX, calculator.yAxisWidth);
-						invalidateView();
-						return true;
-					}
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				// 参数解释：
+				// e1：第1个ACTION_DOWN MotionEvent
+				// e2：最后一个ACTION_MOVE MotionEvent
+				// velocityX：X轴上的移动速度，像素/秒
+				// velocityY：Y轴上的移动速度，像素/秒
+				animateScroll(-velocityX, calculator.yAxisWidth);
+				invalidateView();
+				return true;
+			}
 
-					@Override
-					public boolean onDown(MotionEvent e) {
-						// 停止滚动的动画
-						clearAnimation();
-						invalidateView();
-						return true;
-					}
+			@Override
+			public boolean onDown(MotionEvent e) {
+				// 停止滚动的动画
+				clearAnimation();
+				invalidateView();
+				return true;
+			}
 
-					@Override
-					public void onLongPress(MotionEvent e) {
-						super.onLongPress(e);
-						isLongTouchDown = true;
-						moveX = e.getX();
-						invalidateView();
-					}
-				});
+			@Override
+			public void onLongPress(MotionEvent e) {
+				super.onLongPress(e);
+				isLongTouchDown = true;
+				moveX = e.getX();
+				invalidateView();
+			}
+		});
 	}
 
 	/**
@@ -218,14 +210,12 @@ public class ChartView extends View {
 
 		float x = moveX - calculator.getTranslateX();
 		if (x > calculator.maxX) {
-			canvas.drawLine(calculator.maxX, 0, calculator.maxX,
-					calculator.yAxisHeight, paint);
+			canvas.drawLine(calculator.maxX, 0, calculator.maxX, calculator.yAxisHeight, paint);
 			return;
 		}
 
 		if (x < calculator.minX) {
-			canvas.drawLine(calculator.minX, 0, calculator.minX,
-					calculator.yAxisHeight, paint);
+			canvas.drawLine(calculator.minX, 0, calculator.minX, calculator.yAxisHeight, paint);
 			return;
 		}
 
@@ -242,7 +232,7 @@ public class ChartView extends View {
 
 	/** 绘制曲线和结点 */
 	private void drawCurveAndPoints(Canvas canvas) {
-		paint.setStrokeWidth(lineWidth);
+		paint.setStrokeWidth(this.style.getAxisLineWidth());
 		for (ChartLine line : data.getLineList()) {
 			paint.setColor(line.getLineColor());
 			paint.setAlpha(255);
@@ -256,9 +246,8 @@ public class ChartView extends View {
 					if (i == 0) {
 						curvePath.moveTo(list.get(i).x, list.get(i).y);
 					} else {
-						curvePath.cubicTo(list.get(i - 2).x, list.get(i - 2).y,
-								list.get(i - 1).x, list.get(i - 1).y,
-								list.get(i).x, list.get(i).y);
+						curvePath.cubicTo(list.get(i - 2).x, list.get(i - 2).y, list.get(i - 1).x,
+								list.get(i - 1).y, list.get(i).x, list.get(i).y);
 					}
 				}
 			} else {
@@ -276,24 +265,34 @@ public class ChartView extends View {
 			paint.setStyle(Paint.Style.STROKE);
 			canvas.drawPath(curvePath, paint);// 绘制光滑曲线
 
-			paint.setAlpha(102);
-			curvePath.lineTo(calculator.maxX, calculator.yAxisHeight);
-			curvePath.lineTo(calculator.minX, calculator.yAxisHeight);
-			curvePath.close();
-			paint.setStyle(Paint.Style.FILL);
-			canvas.drawPath(curvePath, paint);// 绘制区域
-
+			// 绘制区域
 			/*
-			 * paint.setStyle(Paint.Style.FILL); if (drawBesselPoint) { // 绘制结点
-			 * for (ChartLinePoint point : line.getPoints()) { if
-			 * (point.isDrawPoint()) { canvas.drawCircle(point.x, point.y, 5,
-			 * paint); paint.setAlpha(80); canvas.drawCircle(point.x, point.y,
-			 * 10, paint); paint.setAlpha(255); } } // 绘制贝塞尔控制结点 for
-			 * (ChartLinePoint point : list) { if
-			 * (!line.getPoints().contains(point)) { paint.setColor(Color.BLUE);
-			 * paint.setAlpha(255); canvas.drawCircle(point.x, point.y, 5,
-			 * paint); } } }
+			 * paint.setAlpha(102); curvePath.lineTo(calculator.maxX,
+			 * calculator.yAxisHeight); curvePath.lineTo(calculator.minX,
+			 * calculator.yAxisHeight); curvePath.close();
+			 * paint.setStyle(Paint.Style.FILL); canvas.drawPath(curvePath,
+			 * paint);
 			 */
+
+			paint.setStyle(Paint.Style.FILL);
+			if (drawBesselPoint) { // 绘制结点
+				for (ChartLinePoint point : line.getPoints()) {
+					if (point.isDrawPoint()) {
+						canvas.drawCircle(point.x, point.y, this.style.radius / 2, paint);
+						paint.setAlpha(80);
+						canvas.drawCircle(point.x, point.y, this.style.radius, paint);
+						paint.setAlpha(255);
+					}
+				}
+				// 绘制贝塞尔控制结点 for
+				/*
+				 * for (ChartLinePoint point : list) { if
+				 * (!line.getPoints().contains(point)) {
+				 * paint.setColor(Color.BLUE); paint.setAlpha(255);
+				 * canvas.drawCircle(point.x, point.y, 5, paint); } }
+				 */
+			}
+
 		}
 		paint.setAlpha(255);
 	}

@@ -107,15 +107,13 @@ public class ChartCalculator {
 				throw new IllegalArgumentException(
 						"xLabelUsageSeries should greater than seriesList.size()");
 
-			int size = data.getLineList().get(data.getxLabelUsageSeries())
-					.getPoints().size();
+			int size = data.getLineList().get(data.getxLabelUsageSeries()).getPoints().size();
 			if (size <= data.getxMaxLabelCount()) {
 				data.setmStartIndex(0);
 				data.setmEndIndex(size);
 			} else {
 				data.setmStartIndex(size - data.getxMaxLabelCount());
-				data.setmEndIndex(data.getmStartIndex()
-						+ data.getxMaxLabelCount());
+				data.setmEndIndex(data.getmStartIndex() + data.getxMaxLabelCount());
 			}
 		}
 	}
@@ -143,12 +141,11 @@ public class ChartCalculator {
 		if (style.isShowLegendView()) {
 			paint.setTextSize(style.getHorizontalTitleTextSize());
 			String titleText = data.getLineList().get(0).getLineTitle();
-			paint.getTextBounds(titleText, 0, titleText.length(),
-					horizontalTitleRect);
+			paint.getTextBounds(titleText, 0, titleText.length(), horizontalTitleRect);
 			xTitleHeight = horizontalTitleRect.height() * 2;
 		}
 
-		labelWidth = ((width - yAxisWidth) * 1.0f) / data.getxMaxLabelCount();
+		labelWidth = ((width - yAxisWidth) * 1.0f) / (data.getxMaxLabelCount() - 1);
 		xAxisWidth = width - yAxisWidth;
 		maxRightX = (width - yAxisWidth) - xAxisWidth;
 
@@ -194,7 +191,12 @@ public class ChartCalculator {
 			// label.width = paint.measureText(label.text);
 			// label.height = horizontalTextRect.height();
 
-			label.x = labelWidth * ((i - data.getmStartIndex()) + 0.3f);
+			label.x = labelWidth * ((i - data.getmStartIndex()));
+			if (i == data.getmStartIndex()) {
+				label.x += style.radius;
+			} else if (i == data.getmEndIndex() - 1) {
+				label.x -= style.radius;
+			}
 			label.y = chartHeight - horizontalTextRect.height() * 0.5f;
 
 			/*
@@ -224,10 +226,9 @@ public class ChartCalculator {
 				title.textX = style.getHorizontalTitlePaddingLeft()
 						+ (titles.indexOf(title) + 0.5f) * stepX;
 				title.textY = xTitleHeight * 0.75f;
-				title.circleX = title.textX - title.textRect.width() / 2
-						- title.circleTextPadding - title.radius;
-				title.circleY = title.textY - horizontalTitleRect.height()
-						* 0.5f + 5;
+				title.circleX = title.textX - title.textRect.width() / 2 - title.circleTextPadding
+						- title.radius;
+				title.circleY = title.textY - horizontalTitleRect.height() * 0.5f + 5;
 			}
 		}
 	}
@@ -245,12 +246,15 @@ public class ChartCalculator {
 			for (int i = data.getmStartIndex(); i < data.getmEndIndex(); i++) {
 				ChartLinePoint chartLinePoint = chartLinePoints.get(i);
 				// 计算数据点的坐标
-				chartLinePoint.x = chartLinePointWidth
-						* ((i - data.getmStartIndex()) + 0.3f);
+				chartLinePoint.x = chartLinePointWidth * ((i - data.getmStartIndex()));
+				if (i == data.getmStartIndex()) {
+					chartLinePoint.x += style.radius;
+				} else if (i == data.getmEndIndex() - 1) {
+					chartLinePoint.x -= style.radius;
+				}
 				float ratio = (chartLinePoint.getyValue() - data.getMinValueY())
 						/ (float) (data.getMaxValueY() - data.getMinValueY());
-				chartLinePoint.y = maxCoordinateY
-						- (maxCoordinateY - minCoordinateY) * ratio;
+				chartLinePoint.y = maxCoordinateY - (maxCoordinateY - minCoordinateY) * ratio;
 			}
 		}
 	}
@@ -279,8 +283,7 @@ public class ChartCalculator {
 				ChartLinePoint chartLinePoint = chartLine.getPoints().get(i);
 				int index = chartLine.getPoints().indexOf(chartLinePoint);
 				if (gridChartLinePoints[index] == null
-						|| gridChartLinePoints[index].getyValue() < chartLinePoint
-								.getyValue()) {
+						|| gridChartLinePoints[index].getyValue() < chartLinePoint.getyValue()) {
 					gridChartLinePoints[index] = chartLinePoint;
 				}
 			}
@@ -290,8 +293,7 @@ public class ChartCalculator {
 	/** 计算贝塞尔结点 */
 	private void computeBesselChartLinePoints() {
 		for (ChartLine chartLine : data.getLineList()) {
-			List<ChartLinePoint> besselChartLinePoints = chartLine
-					.getBesselPoints();
+			List<ChartLinePoint> besselChartLinePoints = chartLine.getBesselPoints();
 			List<ChartLinePoint> chartLinePoints = new ArrayList<ChartLinePoint>();
 			for (int i = data.getmStartIndex(); i < data.getmEndIndex(); i++) {
 				ChartLinePoint chartLinePoint = chartLine.getPoints().get(i);
@@ -306,18 +308,15 @@ public class ChartCalculator {
 			besselChartLinePoints.clear();
 			for (int i = 0; i < count; i++) {
 				if (i == 0 || i == count - 1) {
-					computeUnMonotoneChartLinePoints(i, chartLinePoints,
-							besselChartLinePoints);
+					computeUnMonotoneChartLinePoints(i, chartLinePoints, besselChartLinePoints);
 				} else {
 					ChartLinePoint p0 = chartLinePoints.get(i - 1);
 					ChartLinePoint p1 = chartLinePoints.get(i);
 					ChartLinePoint p2 = chartLinePoints.get(i + 1);
 					if ((p1.y - p0.y) * (p1.y - p2.y) >= 0) {// 极值点
-						computeUnMonotoneChartLinePoints(i, chartLinePoints,
-								besselChartLinePoints);
+						computeUnMonotoneChartLinePoints(i, chartLinePoints, besselChartLinePoints);
 					} else {
-						computeMonotoneChartLinePoints(i, chartLinePoints,
-								besselChartLinePoints);
+						computeMonotoneChartLinePoints(i, chartLinePoints, besselChartLinePoints);
 					}
 				}
 			}
@@ -325,30 +324,25 @@ public class ChartCalculator {
 	}
 
 	/** 计算非单调情况的贝塞尔结点 */
-	private void computeUnMonotoneChartLinePoints(int i,
-			List<ChartLinePoint> chartLinePoints,
+	private void computeUnMonotoneChartLinePoints(int i, List<ChartLinePoint> chartLinePoints,
 			List<ChartLinePoint> besselChartLinePoints) {
 		if (i == 0) {
 			ChartLinePoint p1 = chartLinePoints.get(0);
 			ChartLinePoint p2 = chartLinePoints.get(1);
 			besselChartLinePoints.add(p1);
-			besselChartLinePoints.add(new ChartLinePoint(p1.x + (p2.x - p1.x)
-					* smoothness, p1.y));
+			besselChartLinePoints.add(new ChartLinePoint(p1.x + (p2.x - p1.x) * smoothness, p1.y));
 		} else if (i == chartLinePoints.size() - 1) {
 			ChartLinePoint p0 = chartLinePoints.get(i - 1);
 			ChartLinePoint p1 = chartLinePoints.get(i);
-			besselChartLinePoints.add(new ChartLinePoint(p1.x - (p1.x - p0.x)
-					* smoothness, p1.y));
+			besselChartLinePoints.add(new ChartLinePoint(p1.x - (p1.x - p0.x) * smoothness, p1.y));
 			besselChartLinePoints.add(p1);
 		} else {
 			ChartLinePoint p0 = chartLinePoints.get(i - 1);
 			ChartLinePoint p1 = chartLinePoints.get(i);
 			ChartLinePoint p2 = chartLinePoints.get(i + 1);
-			besselChartLinePoints.add(new ChartLinePoint(p1.x - (p1.x - p0.x)
-					* smoothness, p1.y));
+			besselChartLinePoints.add(new ChartLinePoint(p1.x - (p1.x - p0.x) * smoothness, p1.y));
 			besselChartLinePoints.add(p1);
-			besselChartLinePoints.add(new ChartLinePoint(p1.x + (p2.x - p1.x)
-					* smoothness, p1.y));
+			besselChartLinePoints.add(new ChartLinePoint(p1.x + (p2.x - p1.x) * smoothness, p1.y));
 		}
 	}
 
@@ -359,8 +353,7 @@ public class ChartCalculator {
 	 * @param ChartLinePoints
 	 * @param besselChartLinePoints
 	 */
-	private void computeMonotoneChartLinePoints(int i,
-			List<ChartLinePoint> ChartLinePoints,
+	private void computeMonotoneChartLinePoints(int i, List<ChartLinePoint> ChartLinePoints,
 			List<ChartLinePoint> besselChartLinePoints) {
 		ChartLinePoint p0 = ChartLinePoints.get(i - 1);
 		ChartLinePoint p1 = ChartLinePoints.get(i);
@@ -439,8 +432,7 @@ public class ChartCalculator {
 		data.setmStartIndex(start);
 		data.setmEndIndex(end);
 		compute(width, height);
-		ViewCompat
-				.postInvalidateOnAnimation(data.chartViewLayout.chartVerticalAxes);
+		ViewCompat.postInvalidateOnAnimation(data.chartViewLayout.chartVerticalAxes);
 		translateX = translateX - distanceX;
 	}
 
@@ -474,8 +466,8 @@ public class ChartCalculator {
 			}
 		}
 
-		ChartUtils.log("ensureTranslation", "translateX = " + translateX
-				+ ",maxRightX = " + maxRightX);
+		ChartUtils.log("ensureTranslation", "translateX = " + translateX + ",maxRightX = "
+				+ maxRightX);
 		return false;
 	}
 }

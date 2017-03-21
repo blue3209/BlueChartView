@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 	private ChartLine getRandomChartLine(String title, int color) {
 		List<ChartLinePoint> points = new ArrayList<ChartLinePoint>();
 		Random random = new Random();
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 6; i++) {
 			int r = random.nextInt(10);
 			if (i % 10 == 0) {
 				r = -random.nextInt(15);

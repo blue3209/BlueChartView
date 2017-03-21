@@ -21,8 +21,8 @@
         
         self.labelTransform = self;
         
-        self.maxPointsCount  = 50;
-        self.xMaxLabelCount = 50;
+        self.maxPointsCount  = 6;
+        self.xMaxLabelCount = self.maxPointsCount;
         self.yLabelCount = DEF_YLABEL_COUNT;
         self.xLabelUsageSeries = DEF_YLABEL_USED;
     }

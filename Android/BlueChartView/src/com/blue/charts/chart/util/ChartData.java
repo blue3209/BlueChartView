@@ -85,9 +85,9 @@ public class ChartData {
 			}
 		};
 
-		maxPointsCount = 50;
+		maxPointsCount = 6;
 		yLabelCount = DEF_YLABEL_COUNT;
-		xMaxLabelCount = 50;
+		xMaxLabelCount = maxPointsCount;
 		xLabelUsageSeries = DEF_YLABEL_USED;
 	}
 
